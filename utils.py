@@ -36,3 +36,22 @@ def read_page(url):
 def most_common_value(lst):
     data = Counter(lst)
     return data.most_common(1)[0][0]
+
+
+def tuple_to_list(tuplist):
+    """Converts list of tuples to single list.
+    
+    Converts regular expression output to list.
+    
+    Args:
+        tuplist: A list of tuples, each tuple containg 2 values.
+    Returns:
+        A list containing the combined values within each individual tuple.
+    """
+    newList = []
+    for tupl in tuplist:
+        combined_string = ""
+        for item in tupl:
+            combined_string += item
+        newList.append(combined_string)
+    return newList
