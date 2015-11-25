@@ -1,16 +1,16 @@
 import bs4, re, urllib2, utils
 
-def check_caps(text):
-    """Finds most common string with 2-3 words beginning with capitol letters.
+def check_pattern(text,pattern):
+    """Find most common instance of pattern in text.
     
     Args:
         text: A string of text to search.
+        pattern: A regular expression to search the text with.
     Returns:
         The most common string with the pattern
         capitol followed by lower case followed by space
         repeated 2-3 times.
     """
-    pattern="([A-Z][a-z]*\s[A-Z][a-z]*)(\s[A-Z][a-z]*)?"
     result = utils.tuple_to_list(re.findall(pattern,text))
     if len(result) == 0:
         return [""]
@@ -18,17 +18,27 @@ def check_caps(text):
     #^function that tallys values and list and returns most common
     return name
 
-def find_name(url_list):
-    """Finds most common name used in the html for a list of urls.
-    
-    Reads each url in urlList calls checkCaps on each and returns
-    the name most used in each website.
+def check_names(text):
+    p = "([A-Z][a-z]*\s[A-Z][a-z]*)(\s[A-Z][a-z]*)?"
+    return check_pattern(text,p)
+
+def check_places(text):
+    p = "([A-Z][a-z][a-z]*)(\s[A-Z][a-z]*)?(\s[A-Z][a-z]*)?"
+    return check_pattern(text,p)
+
+def noun_list(query, question_type):
+    """Finds most value in the query results based on the question_type.
+
+    Searches the query results from get_web_results for the pattern
+    matching the question_type.
 
     Args:
-        urlList: A list of strings containing urls.
+        query: A string containing a who search query.
+        question_type: A string containing either who, where, or when
     Returns:
-        A string containg the most common name.
+        A list of results.
     """
+    url_list = utils.get_web_results(query)
     names = []
     for url in url_list:
         try:
@@ -36,10 +46,24 @@ def find_name(url_list):
         except urllib2.HTTPError as e:
             #occurs if site denies access
             print e
-        names.append(check_caps(page))
-    return utils.most_common_value(names)
+        name = check_places(page)
+        if "who" == question_type:
+            name = check_names(page)
+        if "where" == question_type:
+            name = check_places(page)
+        names.append(name)
+    return names
+
+def find_name(query, question_type):
+    nl = noun_list(query, question_type)
+    return utils.most_common_value(nl)
+
+def find_place(query, question_type):
+    nl = noun_list(query, question_type)
+    return utils.most_common_value(nl)
 
 #Test
-q2 = "who invented the lightbulb?"
-results = utils.get_web_results(q2)
-print find_name(results)
+q2 = "who invented ice cream?"
+q3 = "where is mt. everest?"
+print find_name(q2,"who")
+#print find_name(q3,"where")
