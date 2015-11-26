@@ -65,5 +65,5 @@ def find_place(query, question_type):
 #Test
 q2 = "who invented ice cream?"
 q3 = "where is mt. everest?"
-print find_name(q2,"who")
+#print find_name(q2,"who")
 #print find_name(q3,"where")

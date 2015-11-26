@@ -10,13 +10,12 @@ def home():
         question = request.form["question"]
         button = request.form["button"]
         if button == "ask":
-            webresults = utils.get_web_results(question)
             if "who" in question.lower():
-                answer = who.find_name(webresults)
+                answer = who.find_name(question,"who")
             elif "where" in question.lower():
-                answer = where.find_place(webresults)
+                answer = who.find_place(question,"where")
             elif "when" in question.lower():
-                answer = when.find_time(webresults)
+                answer = who.find_time(question,"when")
             else:
                 answer = "Question has to include who, where, or when."
             return render_template("results.html",ans=answer)
